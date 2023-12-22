@@ -1,22 +1,33 @@
+import 'package:app_dev_final/core/network/api.dart';
+import 'package:app_dev_final/core/repository/product_repo.dart';
 import 'package:app_dev_final/firebase_options.dart';
-import 'package:app_dev_final/pages/home_page.dart';
-import 'package:app_dev_final/pages/login_page.dart';
-import 'package:app_dev_final/pages/signup_page.dart';
+import 'package:app_dev_final/pages/question_one.dart';
+import 'package:app_dev_final/pages/question_two.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
+      final ProductRepository userRepository = ProductRepository(
+    userApiClient: UserApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
   // name: 'web',
   options: DefaultFirebaseOptions.currentPlatform,
 );
- runApp(const MyApp());
+ runApp(MyApp(
+  userRepository: userRepository,
+ ));
  
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.userRepository});
+  final ProductRepository userRepository;
 
   // This widget is the root of your application.
   @override
@@ -42,13 +53,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
-            routes: {
-    '/signup_page':(context) => const SignupPage(),
-    '/login_page':(context) => const LoginPage(),
-    '/home_page': (context) => HomePage()
+      home: const UiScreen() //HomePage(userRepository: userRepository,),
+  //           routes: {
+  //   '/signup_page':(context) => SignupPage(userRepository: userRepository,),
+  //   '/login_page':(context) =>  LoginPage(userRepository: userRepository,),
+  //   '/home_page': (context) => HomePage(userRepository: userRepository,)
 
-  },
+  // },
 
     );
   }
